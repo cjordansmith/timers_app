@@ -24,12 +24,18 @@ class TimersDashboard extends React.Component {
         ],
     };
 
-    /*  create new timer form   */
+    //  create new timer form
     handleCreateFormSubmit = (timer) => {
         this.createTimer(timer);
     };
 
-    /*  create the new timer    */
+    // pass props to updateTimer (attrs)
+    handleEditFormSubmit = (attrs) => {
+        this.updateTimer(attrs);
+    };
+
+
+    //  create the new timer
     createTimer = (timer) => {
         /*  create the timer    */
         const t = helpers.newTimer(timer);
@@ -39,12 +45,31 @@ class TimersDashboard extends React.Component {
         });
     };
 
+    //  traverse the array of timer objects, update timer
+    updateTimer = (attrs) => {
+        this.setState({
+            timers: this.state.timers.map((timer) => {
+                if (timer.id === attrs.id) {
+                    //  if timer's id matches that of the submitted form, return a new object with the updated attributes
+                    return Object.assign({}, timer, {
+                        title: attrs.title,
+                        project: attrs.project,
+                    });
+                } else {
+                    //  if timer's id does not match the submitted form, return the original timer
+                    return timer;
+                }
+            }),
+        });
+    };
+
     render() {
         return (
             <div className='ui three column centered grid'>
                 <div className='column'>
                     <EditableTimerList
                         timers={this.state.timers}
+                        onFormSubmit={this.handleEditFormSubmit}
                     />
                     <ToggleableTimerForm
                         onFormSubmit={this.handleCreateFormSubmit}
@@ -121,6 +146,7 @@ class EditableTimerList extends React.Component {
                 project={timer.project}
                 elapsed={timer.elapsed}
                 runningSince={timer.runningSince}
+                onFormSubmit={this.props.onFormSubmit}
             />
         ));
         return (
@@ -140,14 +166,47 @@ class EditableTimer extends React.Component {
         editFormOpen: false,
     };
 
+    //  when EDIT button is clicked, call function openForm()
+    handleEditClick = () => {
+        this.openForm();
+    };
+
+    //  when CLOSE button is clicked, call function closeForm()
+    handleFormClose = () => {
+        this.closeForm();
+    };
+
+    //  when timer is editted, pass props to onFormSubmit(timer)
+    //  call function closeForm()
+    handleSubmit = (timer) => {
+        this.props.onFormSubmit(timer);
+        this.closeForm();
+    };
+
+    //  change the state of editFormOpen to false
+    closeForm = () => {
+        this.setState({
+            editFormOpen: false
+        });
+    };
+
+    //  change the state of editFormOpen to open
+    openForm = () => {
+        this.setState({
+            editFormOpen: true
+        });
+    };
+
     render() {
-        if (this.props.editFormOpen) {
+        if (this.state.editFormOpen) {
             /*  if timer is STOPPED, show these fields  */
             return (
                 <TimerForm
                     id={this.props.id}
                     title={this.props.title}
                     project={this.props.project}
+                    onFormSubmit={this.handleSubmit}
+                    onFormClose={this.handleFormClose}
                 />
             );
         } else {
@@ -159,6 +218,7 @@ class EditableTimer extends React.Component {
                     project={this.props.project}
                     elapsed={this.props.elapsed}
                     runningSince={this.props.runningSince}
+                    onEditClick={this.handleEditClick}
                 />
             );
         }
@@ -180,7 +240,10 @@ class Timer extends React.Component {
                         <h2>{elapsedString}</h2>
                     </div>
                     <div className='extra content'>
-                        <span className='right floated edit icon'>
+                        <span
+                            className='right floated edit icon'
+                            onClick={this.props.onEditClick}
+                        >
                             <i className='edit icon' />
                         </span>
                         <span className='right floated trash icon'>
