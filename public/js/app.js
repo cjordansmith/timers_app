@@ -9,87 +9,9 @@ class TimersDashboard extends React.Component {
             <div className='ui three column centered grid'>
                 <div className='column'>
                     <EditableTimerList />
-                    <ToggleableTimerForm isOpen={true} />
-                </div>
-            </div>
-        );
-    }
-}
-
-//  EditableTimerList component to render two EditableTimer components
-//  one will render a timer's face
-//  one will render a timer's edit form
-class EditableTimerList extends React.Component {
-    render() {
-        return (
-            <div id='timers'>
-                <EditableTimer
-                    title='Learn React'
-                    projects='Web Domination'
-                    elapsed='8986300'
-                    runningSince={null}
-                    editFormOpen={false}
-                />
-                <EditableTimer
-                    title='Learn extreme ironing'
-                    project='World domination'
-                    elapsed='3890985'
-                    runningSince={null}
-                    editFormOpen={true}
-                />
-            </div>
-        )
-    }
-}
-
-//  EditableTimer component to return either a TimerForm or a Timer
-//  based on the prop editFormOpen
-class EditableTimer extends React.Component {
-    render() {
-        if (this.props.editFormOpen) {
-            return (
-                <TimerForm
-                    title={this.props.title}
-                    project={this.props.project}
-                />
-            );
-        } else {
-            return (
-                <Timer
-                    title={this.props.title}
-                    project={this.props.project}
-                    elapsed={this.props.elapsed}
-                    runningSince={this.props.runningSince}
-                />
-            );
-        }
-    }
-}
-
-//  TimerForm component to render a form for creating a new timer or edit existing
-//  Contains two input fields TITLE and PROJECT, and two buttons
-//  var submitText uses this.props.title to determine what text the submit button should display
-//  if title is present - button displays Update, otherwise it displays Create
-class TimerForm extends React.Component {
-    render() {
-        const submitText = this.props.title ? 'Update' : 'Create' ;
-        return (
-            <div className='ui centered card'>
-                <div className='content'>
-                    <div className='ui form'>
-                        <div className='field'>
-                            <label>Title</label>
-                            <input type='text' defaultValue={this.props.title} />
-                        </div>
-                        <div className='field'>
-                            <label>Project</label>
-                            <input type='text' defaultValue={this.props.project} />
-                        </div>
-                        <div className='ui two bottom attached buttons'>
-                            <button className='ui basic blue button'>{submitText}</button>
-                            <button className='ui basic red button'>Cancel</button>
-                        </div>
-                    </div>
+                    <ToggleableTimerForm
+                        isOpen={false}
+                    />
                 </div>
             </div>
         );
@@ -119,10 +41,60 @@ class ToggleableTimerForm extends React.Component {
     }
 }
 
+//  EditableTimerList component to render two EditableTimer components
+//  one will render a timer's face
+//  one will render a timer's edit form
+class EditableTimerList extends React.Component {
+    render() {
+        return (
+            <div id='timers'>
+                <EditableTimer
+                    title='Learn React'
+                    projects='Web Domination'
+                    elapsed='8986300'
+                    runningSince={null}
+                    editFormOpen={false}
+                />
+                <EditableTimer
+                    title='Learn extreme ironing'
+                    project='World domination'
+                    elapsed='3890985'
+                    runningSince={null}
+                    editFormOpen={true}
+                />
+            </div>
+        );
+    }
+}
+
+//  EditableTimer component to return either a TimerForm or a Timer
+//  based on the prop editFormOpen
+class EditableTimer extends React.Component {
+    render() {
+        if (this.props.editFormOpen) {
+            return (
+                <TimerForm
+                    title={this.props.title}
+                    project={this.props.project}
+                />
+            );
+        } else {
+            return (
+                <Timer
+                    title={this.props.title}
+                    project={this.props.project}
+                    elapsed={this.props.elapsed}
+                    runningSince={this.props.runningSince}
+                />
+            );
+        }
+    }
+}
+
 //  Timer componenet to render individual timers
 //  elapsedString is stored in milliseconds
 //  renderElapsedString changes time to a readable format HH:MM:SS
-class Timer extends React.componenet {
+class Timer extends React.Component {
     render() {
         const elapsedString = helpers.renderElapsedString(this.props.elapsed);
         return (
@@ -147,3 +119,41 @@ class Timer extends React.componenet {
         );
     }
 }
+
+//  TimerForm component to render a form for creating a new timer or edit existing
+//  Contains two input fields TITLE and PROJECT, and two buttons
+//  var submitText uses this.props.title to determine what text the submit button should display
+//  if title is present - button displays Update, otherwise it displays Create
+class TimerForm extends React.Component {
+    render() {
+        const submitText = this.props.title ? 'Update' : 'Create';
+        return (
+            <div className='ui centered card'>
+                <div className='content'>
+                    <div className='ui form'>
+                        <div className='field'>
+                            <label>Title</label>
+                            <input type='text' defaultValue={this.props.title} />
+                        </div>
+                        <div className='field'>
+                            <label>Project</label>
+                            <input type='text' defaultValue={this.props.project} />
+                        </div>
+                        <div className='ui two bottom attached buttons'>
+                            <button className='ui basic blue button'>{submitText}</button>
+                            <button className='ui basic red button'>Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+}
+
+
+
+//  specify WHICH React component to render and WHERE in the HTML document to render it
+ReactDOM.render(
+    <TimersDashboard />,
+    document.getElementById('content')
+);
