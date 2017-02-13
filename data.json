@@ -12,5 +12,12 @@
         "id": "2c43306e-5b44-4ff8-8753-33c35adbd06f",
         "elapsed": 30712350226,
         "runningSince": null
+    },
+    {
+        "title": "new title",
+        "project": "my project",
+        "id": "7e05af08-ea47-4a17-b95c-5edab7f243c8",
+        "elapsed": null,
+        "runningSince": null
     }
 ]

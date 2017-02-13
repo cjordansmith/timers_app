@@ -5,23 +5,30 @@
 //  When ToggleableTimerForm is "open" the form is being displayed
 class TimersDashboard extends React.Component {
 
-    //  initialize the components state defaults
+    //  initialize the components state set to a blank array
     state = {
-        timers: [
-            {
-                title: 'Practice squat',
-                project: 'Gym Chores',
-                id: uuid.v4(),
-                elapsed: 5456099,
-                runningSince: Date.now(),
-            },{
-                title: 'Bake squash',
-                project: 'Kitchen Chores',
-                id: uuid.v4(),
-                elapsed: 1273998,
-                runningSince: null,
-            },
-        ],
+        timers: [],
+    };
+
+    //  populate the app by making a request to the server
+    componentDidMount() {
+        //  calls loadTimersFromServer() function
+        this.loadTimersFromServer();
+        //  call every 5 seconds
+        setInterval(this.loadTimersFromServer, 5000);
+    }
+
+    //  set the state based on the server request
+    loadTimersFromServer = () => {
+        //  calls client.getTimers() function
+        //  makes the HTTP request to server, requesting the list of timers
+        client.getTimers((serverTimers) => (
+            //  when client hears back, triggers a new render
+            //  populates the app with EditableTimer children and all of their children
+            this.setState({
+                timers: serverTimers
+            })
+        ));
     };
 
     //  create new timer form
@@ -58,6 +65,7 @@ class TimersDashboard extends React.Component {
         this.setState({
             timers: this.state.timers.concat(t),
         });
+        client.createTimer(t);
     };
 
     //  traverse the array of timer objects, update timer
@@ -76,6 +84,7 @@ class TimersDashboard extends React.Component {
                 }
             }),
         });
+        client.updateTimer(attrs);
     };
 
     //  show the timer object that has an id matching timerId being removed
@@ -83,6 +92,11 @@ class TimersDashboard extends React.Component {
         this.setState({
             timers: this.state.timers.filter(t => t.id !== timerId),
         });
+        client.deleteTimer(
+            {
+                id: timerId
+            }
+        );
     };
 
     //  START the timer
@@ -99,6 +113,12 @@ class TimersDashboard extends React.Component {
                 }
             }),
         });
+        client.startTimer(
+            {
+                id: timerId,
+                start: now
+            }
+        );
     };
 
     // STOP the timer
@@ -117,6 +137,12 @@ class TimersDashboard extends React.Component {
                 }
             }),
         });
+        client.stopTimer(
+            {
+                id: timerId,
+                start: now
+            }
+        );
     };
 
     render() {
